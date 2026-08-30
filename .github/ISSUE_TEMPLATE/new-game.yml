@@ -1,0 +1,39 @@
+name: New Game Proposal
+description: Propose adding a game to Augur (read docs/governance/new-game-process.md first).
+title: "[New game]: "
+labels: ["type:feature", "area:game-adapter"]
+body:
+  - type: input
+    id: game
+    attributes:
+      label: Game and publisher
+    validations: { required: true }
+  - type: textarea
+    id: fit
+    attributes:
+      label: Why coaching fits this game
+      description: Decision cadence, latency tolerance, what a coach adds.
+    validations: { required: true }
+  - type: textarea
+    id: policy
+    attributes:
+      label: Policy posture
+      description: What do the publisher's terms say about overlays, screen analysis, real-time advice? Cite the terms. Unknowns are fine — they become the policy review.
+    validations: { required: true }
+  - type: textarea
+    id: observation
+    attributes:
+      label: Observation feasibility
+      description: What can honestly be extracted from screen capture / permitted logs / official APIs? What cannot?
+    validations: { required: true }
+  - type: input
+    id: maintainer
+    attributes:
+      label: Committed maintainer(s)
+      description: A game does not ship without one (game.yaml + maintainers.yaml).
+    validations: { required: true }
+  - type: textarea
+    id: corpus
+    attributes:
+      label: Strategy corpus shape
+      description: What seasonal/patch structure would the strategy pack have? Who writes it?

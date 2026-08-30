@@ -1,0 +1,421 @@
+# Machine-readable GitHub plan for Augur.
+# Sufficient to reproduce the GitHub setup; applied by planning/apply-github-plan.sh (idempotent).
+# Issue bodies live beside this file in planning/issues/ (exact intended bodies; #slug refs are
+# rewritten to real issue numbers by the apply script after creation).
+repository:
+  owner: IftekharUddin
+  name: augur
+  visibility: public
+  default_branch: master
+  description: "Real-time AI game coaching on the ZeroClaw runtime. A coach, never a bot. First game: Hearthstone Battlegrounds."
+  topics: [ai, coaching, gaming, hearthstone, battlegrounds, rust, tauri, zeroclaw]
+  homepage: ""
+  upstream: https://github.com/zeroclaw-labs/zeroclaw
+  settings:
+    actions_disabled_at_fork: true   # re-enabled by the ci-adaptation issue
+    wiki: false
+    issues: true
+planning_branch: feat/augur-planning-foundation
+planning_pr:
+  title: "docs(planning): establish Augur architecture, roadmap, and governance plan"
+  base: master
+  head: feat/augur-planning-foundation
+labels:
+  - name: "type:epic"
+    color: "3E4B9E"
+    description: "Multi-issue outcome; links child issues"
+  - name: "type:feature"
+    color: "1D76DB"
+    description: "Product or platform capability"
+  - name: "type:research"
+    color: "5319E7"
+    description: "Timeboxed investigation producing a recorded answer"
+  - name: "type:bug"
+    color: "B60205"
+    description: "Defect"
+  - name: "type:docs"
+    color: "0075CA"
+    description: "Documentation"
+  - name: "type:test"
+    color: "0E8A16"
+    description: "Test, harness, or CI"
+  - name: "type:security"
+    color: "D93F0B"
+    description: "Security-relevant change"
+  - name: "type:strategy"
+    color: "6F42C1"
+    description: "Strategy-pack content work (no Rust)"
+  - name: "type:governance"
+    color: "C5DEF5"
+    description: "Process, ownership, governance"
+  - name: "area:runtime"
+    color: "2B7489"
+    description: "Augur runtime layer / ZeroClaw integration"
+  - name: "area:desktop"
+    color: "2B7489"
+    description: "Tauri desktop app"
+  - name: "area:capture"
+    color: "2B7489"
+    description: "Window capture providers"
+  - name: "area:vision"
+    color: "2B7489"
+    description: "Vision pipeline / extraction"
+  - name: "area:observation"
+    color: "2B7489"
+    description: "Envelopes, session state, change detection"
+  - name: "area:strategy"
+    color: "2B7489"
+    description: "Strategy packs, validation, retrieval"
+  - name: "area:recommendation"
+    color: "2B7489"
+    description: "Coaching turn, contracts, invalidation"
+  - name: "area:voice"
+    color: "2B7489"
+    description: "TTS/STT/conversation"
+  - name: "area:game-adapter"
+    color: "2B7489"
+    description: "GameAdapter API and game modules"
+  - name: "area:community"
+    color: "2B7489"
+    description: "Contributor workflows, governance"
+  - name: "area:release"
+    color: "2B7489"
+    description: "CI, packaging, signing, release"
+  - name: "area:policy"
+    color: "2B7489"
+    description: "Game policy and privacy posture"
+  - name: "game:platform"
+    color: "8250DF"
+    description: "Game-agnostic platform work"
+  - name: "game:battlegrounds"
+    color: "8250DF"
+    description: "Hearthstone Battlegrounds"
+  - name: "priority:p0"
+    color: "B60205"
+    description: "Blocks the milestone"
+  - name: "priority:p1"
+    color: "D93F0B"
+    description: "Important for the milestone"
+  - name: "priority:p2"
+    color: "FBCA04"
+    description: "Valuable, schedulable"
+  - name: "priority:p3"
+    color: "C2E0C6"
+    description: "Nice to have"
+  - name: "status:blocked"
+    color: "000000"
+    description: "Waiting on a dependency"
+  - name: "status:needs-design"
+    color: "FEF2C0"
+    description: "Needs a design pass before work"
+  - name: "status:ready"
+    color: "0E8A16"
+    description: "Ready to pick up"
+  - name: "status:needs-review"
+    color: "FBCA04"
+    description: "PR up, awaiting review"
+  - name: "status:help-wanted"
+    color: "008672"
+    description: "Community contribution welcome"
+  - name: "risk:high"
+    color: "D93F0B"
+    description: "Wide blast radius or hard to reverse"
+  - name: "risk:medium"
+    color: "FBCA04"
+    description: "Moderate blast radius"
+  - name: "risk:low"
+    color: "C2E0C6"
+    description: "Contained"
+  - name: "bug"
+    color: "D73A4A"
+    description: "Upstream bug_report.yml auto-label"
+  - name: "enhancement"
+    color: "A2EEEF"
+    description: "Upstream feature_request.yml auto-label"
+  - name: "docs"
+    color: "0075CA"
+    description: "Upstream docs_issue.yml auto-label"
+  - name: "type:rfc"
+    color: "5319E7"
+    description: "Upstream rfc_design.yml auto-label"
+  - name: "r:support"
+    color: "EDEDED"
+    description: "Upstream support_config.yml auto-label"
+milestones:
+  - title: "Milestone 0 - Augur Foundation"
+    description: "Exit: fork+branding established w/ attribution; reuse audit committed; runtime-integration decision ratified; architecture documented; adapter boundaries proposed; common schemas drafted; upstream-sync strategy documented; capture approach selected; security/privacy/policy models documented; CI + contributor templates adapted; issue graph created."
+  - title: "Milestone 1 - Battlegrounds Advice MVP"
+    description: "Exit: app launches; Hearthstone selected/detected; manual observation via hotkey; screenshot reaches a vision model correctly; seasonal pack searchable; schema-valid cited advice; GUI displays it; advice bound to its observation; fixtures + baseline evals; zero gameplay automation. One narrow complete path over premature monitoring."
+  - title: "Milestone 2 - Live Battlegrounds Coaching"
+    description: "Exit: automatic window capture; change detection prevents unnecessary model calls; match state persists; stale advice invalidates; capture-excluded always-on-top overlay; confidence + refs visible; latency and cost measured; privacy/retention documented; feedback linked to observation, model call, and strategy refs."
+  - title: "Milestone 3 - Voice Conversation"
+    description: "Exit: recommendations speakable; push-to-talk transcription; questions carry match context; spoken responses; mute/interruption/cancellation; permissions handled; replaceable speech providers; no audio/transcript retention by default; voice diagnostics consent-gated."
+  - title: "Milestone 4 - Multi-Game and Community Platform"
+    description: "Exit: versioned GameAdapter contract; new-game template + docs; strategy validation tooling; per-game CODEOWNERS; maintainer governance documented; second-game/synthetic adapter validates architecture; platform imports no Battlegrounds concepts; support/policy status visible per game; strategy-only contribution path proven."
+issues:
+  - slug: epic-platform-foundation
+    title: "[Epic] Augur platform foundation"
+    milestone: "Milestone 0 - Augur Foundation"
+    labels: ["type:epic", "game:platform", "priority:p0", "status:ready"]
+    body_file: planning/issues/001-epic-platform-foundation.md
+  - slug: fork-branding-repo-ops
+    title: "Fork branding, attribution integrity, and upstream remote operations"
+    milestone: "Milestone 0 - Augur Foundation"
+    labels: ["type:docs", "area:community", "game:platform", "priority:p1", "risk:low", "status:ready"]
+    body_file: planning/issues/002-fork-branding-repo-ops.md
+    epic: epic-platform-foundation
+  - slug: ratify-decision-0001
+    title: "Ratify decision 0001: sidecar daemon over local JSON-RPC"
+    milestone: "Milestone 0 - Augur Foundation"
+    labels: ["type:research", "area:runtime", "game:platform", "priority:p0", "risk:high", "status:ready"]
+    body_file: planning/issues/003-ratify-decision-0001.md
+    epic: epic-platform-foundation
+  - slug: augur-crate-skeleton
+    title: "Augur crate skeleton, workspace wiring, and architecture-invariant tests"
+    milestone: "Milestone 0 - Augur Foundation"
+    labels: ["type:feature", "area:runtime", "game:platform", "priority:p0", "risk:medium", "status:ready"]
+    body_file: planning/issues/004-augur-crate-skeleton.md
+    depends_on: [ratify-decision-0001]
+    epic: epic-platform-foundation
+  - slug: augur-rpc-extensions
+    title: "augur/* RPC extension methods over the local socket"
+    milestone: "Milestone 0 - Augur Foundation"
+    labels: ["type:feature", "area:runtime", "area:desktop", "game:platform", "priority:p0", "risk:medium", "status:blocked"]
+    body_file: planning/issues/005-augur-rpc-extensions.md
+    depends_on: [ratify-decision-0001, augur-crate-skeleton]
+    epic: epic-platform-foundation
+  - slug: common-envelope-schemas
+    title: "Common observation envelope and recommendation contract (schemas + types)"
+    milestone: "Milestone 0 - Augur Foundation"
+    labels: ["type:feature", "area:observation", "area:recommendation", "game:platform", "priority:p0", "risk:medium", "status:ready"]
+    body_file: planning/issues/006-common-envelope-schemas.md
+    depends_on: [augur-crate-skeleton]
+    epic: epic-platform-foundation
+  - slug: screenshot-vision-handoff
+    title: "Deliberate screenshot-to-vision handoff and image budget tuning"
+    milestone: "Milestone 0 - Augur Foundation"
+    labels: ["type:feature", "area:vision", "game:platform", "priority:p0", "risk:high", "status:ready"]
+    body_file: planning/issues/007-screenshot-vision-handoff.md
+    depends_on: [augur-crate-skeleton]
+    epic: epic-platform-foundation
+  - slug: ci-adaptation
+    title: "Adapt CI for Augur: hosted runners, Augur required gate"
+    milestone: "Milestone 0 - Augur Foundation"
+    labels: ["type:test", "area:release", "game:platform", "priority:p0", "risk:medium", "status:ready"]
+    body_file: planning/issues/008-ci-adaptation.md
+    epic: epic-platform-foundation
+  - slug: hsbg-policy-review
+    title: "Official game-policy review: Hearthstone Battlegrounds"
+    milestone: "Milestone 0 - Augur Foundation"
+    labels: ["type:research", "area:policy", "game:battlegrounds", "priority:p0", "risk:high", "status:ready"]
+    body_file: planning/issues/009-hsbg-policy-review.md
+    epic: epic-platform-foundation
+  - slug: epic-bg-advice-mvp
+    title: "[Epic] Battlegrounds Advice MVP"
+    milestone: "Milestone 1 - Battlegrounds Advice MVP"
+    labels: ["type:epic", "game:battlegrounds", "priority:p0", "status:ready"]
+    body_file: planning/issues/010-epic-bg-advice-mvp.md
+  - slug: macos-capture-provider
+    title: "macOS window enumeration and capture provider (ScreenCaptureKit)"
+    milestone: "Milestone 1 - Battlegrounds Advice MVP"
+    labels: ["type:feature", "area:capture", "game:platform", "priority:p0", "risk:high", "status:ready"]
+    body_file: planning/issues/011-macos-capture-provider.md
+    depends_on: [augur-crate-skeleton]
+    epic: epic-bg-advice-mvp
+  - slug: hsbg-detection-selection
+    title: "Hearthstone detection and game-window selection"
+    milestone: "Milestone 1 - Battlegrounds Advice MVP"
+    labels: ["type:feature", "area:capture", "area:desktop", "game:battlegrounds", "priority:p1", "risk:medium", "status:blocked"]
+    body_file: planning/issues/012-hsbg-detection-selection.md
+    depends_on: [macos-capture-provider, augur-rpc-extensions]
+    epic: epic-bg-advice-mvp
+  - slug: manual-observation-trigger
+    title: "Manual observation trigger: hotkey/button to advice, end to end"
+    milestone: "Milestone 1 - Battlegrounds Advice MVP"
+    labels: ["type:feature", "area:observation", "area:desktop", "game:battlegrounds", "priority:p0", "risk:medium", "status:blocked"]
+    body_file: planning/issues/013-manual-observation-trigger.md
+    depends_on: [macos-capture-provider, hsbg-detection-selection, augur-rpc-extensions, coaching-turn, desktop-shell-mvp]
+    epic: epic-bg-advice-mvp
+  - slug: bg-state-schema-extraction
+    title: "Battlegrounds state schema and vision extraction prompts"
+    milestone: "Milestone 1 - Battlegrounds Advice MVP"
+    labels: ["type:feature", "area:vision", "area:observation", "game:battlegrounds", "priority:p0", "risk:high", "status:blocked"]
+    body_file: planning/issues/014-bg-state-schema-extraction.md
+    depends_on: [common-envelope-schemas, extraction-eval-harness]
+    epic: epic-bg-advice-mvp
+  - slug: extraction-eval-harness
+    title: "State-extraction evaluation harness (per-field accuracy over fixtures)"
+    milestone: "Milestone 1 - Battlegrounds Advice MVP"
+    labels: ["type:test", "area:vision", "game:battlegrounds", "priority:p1", "risk:medium", "status:blocked"]
+    body_file: planning/issues/015-extraction-eval-harness.md
+    depends_on: [common-envelope-schemas]
+    epic: epic-bg-advice-mvp
+  - slug: strategy-validation-cli
+    title: "Strategy-pack validation CLI and CI gate"
+    milestone: "Milestone 1 - Battlegrounds Advice MVP"
+    labels: ["type:feature", "area:strategy", "game:platform", "priority:p0", "risk:medium", "status:blocked"]
+    body_file: planning/issues/016-strategy-validation-cli.md
+    depends_on: [augur-crate-skeleton, ci-adaptation]
+    epic: epic-bg-advice-mvp
+  - slug: strategy-retrieval-mvp
+    title: "Strategy retrieval MVP: filters, lexical ranking, caps, citation check"
+    milestone: "Milestone 1 - Battlegrounds Advice MVP"
+    labels: ["type:feature", "area:strategy", "game:platform", "priority:p0", "risk:medium", "status:blocked"]
+    body_file: planning/issues/017-strategy-retrieval-mvp.md
+    depends_on: [strategy-validation-cli, common-envelope-schemas]
+    epic: epic-bg-advice-mvp
+  - slug: initial-season-pack
+    title: "Initial Battlegrounds seasonal strategy pack"
+    milestone: "Milestone 1 - Battlegrounds Advice MVP"
+    labels: ["type:strategy", "area:strategy", "game:battlegrounds", "priority:p1", "risk:low", "status:help-wanted"]
+    body_file: planning/issues/018-initial-season-pack.md
+    depends_on: [strategy-validation-cli]
+    epic: epic-bg-advice-mvp
+  - slug: coaching-turn
+    title: "Bounded coaching turn: prompts, structured recommendation, validation"
+    milestone: "Milestone 1 - Battlegrounds Advice MVP"
+    labels: ["type:feature", "area:recommendation", "area:runtime", "game:battlegrounds", "priority:p0", "risk:high", "status:blocked"]
+    body_file: planning/issues/019-coaching-turn.md
+    depends_on: [strategy-retrieval-mvp, common-envelope-schemas, screenshot-vision-handoff, augur-rpc-extensions]
+    epic: epic-bg-advice-mvp
+  - slug: desktop-shell-mvp
+    title: "Augur desktop shell: onboarding and coaching dashboard (RPC-only)"
+    milestone: "Milestone 1 - Battlegrounds Advice MVP"
+    labels: ["type:feature", "area:desktop", "game:platform", "priority:p0", "risk:medium", "status:blocked"]
+    body_file: planning/issues/020-desktop-shell-mvp.md
+    depends_on: [ratify-decision-0001, augur-rpc-extensions]
+    epic: epic-bg-advice-mvp
+  - slug: recommendation-eval-harness
+    title: "Recommendation evaluation harness and expert golden set"
+    milestone: "Milestone 1 - Battlegrounds Advice MVP"
+    labels: ["type:test", "area:recommendation", "game:battlegrounds", "priority:p1", "risk:medium", "status:blocked"]
+    body_file: planning/issues/021-recommendation-eval-harness.md
+    depends_on: [coaching-turn, extraction-eval-harness]
+    epic: epic-bg-advice-mvp
+  - slug: injection-defense-fixtures
+    title: "Prompt-injection defense regression fixtures (strategy + frames)"
+    milestone: "Milestone 1 - Battlegrounds Advice MVP"
+    labels: ["type:security", "area:strategy", "area:recommendation", "game:platform", "priority:p0", "risk:high", "status:blocked"]
+    body_file: planning/issues/022-injection-defense-fixtures.md
+    depends_on: [coaching-turn, strategy-validation-cli]
+    epic: epic-bg-advice-mvp
+  - slug: epic-live-pipeline
+    title: "[Epic] Live observation pipeline"
+    milestone: "Milestone 2 - Live Battlegrounds Coaching"
+    labels: ["type:epic", "game:battlegrounds", "priority:p1", "status:ready"]
+    body_file: planning/issues/023-epic-live-pipeline.md
+  - slug: windows-capture-provider
+    title: "Windows window capture provider (Windows.Graphics.Capture)"
+    milestone: "Milestone 2 - Live Battlegrounds Coaching"
+    labels: ["type:feature", "area:capture", "game:platform", "priority:p1", "risk:high", "status:blocked"]
+    body_file: planning/issues/024-windows-capture-provider.md
+    depends_on: [macos-capture-provider, ci-adaptation]
+    epic: epic-live-pipeline
+  - slug: capture-cadence-change-detection
+    title: "Adaptive capture cadence and visual change detection"
+    milestone: "Milestone 2 - Live Battlegrounds Coaching"
+    labels: ["type:feature", "area:capture", "area:observation", "game:platform", "priority:p1", "risk:medium", "status:blocked"]
+    body_file: planning/issues/025-capture-cadence-change-detection.md
+    depends_on: [macos-capture-provider, windows-capture-provider, augur-rpc-extensions]
+    epic: epic-live-pipeline
+  - slug: match-session-state
+    title: "Match session state store"
+    milestone: "Milestone 2 - Live Battlegrounds Coaching"
+    labels: ["type:feature", "area:observation", "game:platform", "priority:p1", "risk:low", "status:blocked"]
+    body_file: planning/issues/026-match-session-state.md
+    depends_on: [common-envelope-schemas]
+    epic: epic-live-pipeline
+  - slug: advice-invalidation
+    title: "Advice invalidation and staleness propagation"
+    milestone: "Milestone 2 - Live Battlegrounds Coaching"
+    labels: ["type:feature", "area:recommendation", "game:platform", "priority:p1", "risk:medium", "status:blocked"]
+    body_file: planning/issues/027-advice-invalidation.md
+    depends_on: [match-session-state, capture-cadence-change-detection, coaching-turn]
+    epic: epic-live-pipeline
+  - slug: overlay
+    title: "Always-on-top overlay, excluded from capture"
+    milestone: "Milestone 2 - Live Battlegrounds Coaching"
+    labels: ["type:feature", "area:desktop", "game:platform", "priority:p1", "risk:high", "status:blocked"]
+    body_file: planning/issues/028-overlay.md
+    depends_on: [desktop-shell-mvp, advice-invalidation, windows-capture-provider]
+    epic: epic-live-pipeline
+  - slug: metrics-degraded-states
+    title: "Latency/cost metrics ledger and degraded-mode UI states"
+    milestone: "Milestone 2 - Live Battlegrounds Coaching"
+    labels: ["type:feature", "area:desktop", "area:observation", "game:platform", "priority:p1", "risk:low", "status:blocked"]
+    body_file: planning/issues/029-metrics-degraded-states.md
+    depends_on: [coaching-turn, capture-cadence-change-detection, desktop-shell-mvp]
+    epic: epic-live-pipeline
+  - slug: privacy-retention-feedback
+    title: "Privacy and retention controls; incorrect-advice feedback bundle"
+    milestone: "Milestone 2 - Live Battlegrounds Coaching"
+    labels: ["type:security", "area:desktop", "area:policy", "game:platform", "priority:p1", "risk:medium", "status:blocked"]
+    body_file: planning/issues/030-privacy-retention-feedback.md
+    depends_on: [match-session-state, metrics-degraded-states, overlay]
+    epic: epic-live-pipeline
+  - slug: epic-voice
+    title: "[Epic] Voice coaching"
+    milestone: "Milestone 3 - Voice Conversation"
+    labels: ["type:epic", "game:platform", "priority:p2", "status:ready"]
+    body_file: planning/issues/031-epic-voice.md
+  - slug: tts-recommendations
+    title: "Speak recommendations: TTS pipeline and desktop playback"
+    milestone: "Milestone 3 - Voice Conversation"
+    labels: ["type:feature", "area:voice", "game:platform", "priority:p2", "risk:medium", "status:blocked"]
+    body_file: planning/issues/032-tts-recommendations.md
+    depends_on: [coaching-turn, augur-rpc-extensions, desktop-shell-mvp]
+    epic: epic-voice
+  - slug: ptt-stt
+    title: "Push-to-talk speech recognition"
+    milestone: "Milestone 3 - Voice Conversation"
+    labels: ["type:feature", "area:voice", "area:desktop", "game:platform", "priority:p2", "risk:medium", "status:blocked"]
+    body_file: planning/issues/033-ptt-stt.md
+    depends_on: [tts-recommendations, augur-rpc-extensions]
+    epic: epic-voice
+  - slug: voice-conversation
+    title: "Grounded voice conversation with interruption, cancellation, and mute"
+    milestone: "Milestone 3 - Voice Conversation"
+    labels: ["type:feature", "area:voice", "area:recommendation", "game:platform", "priority:p2", "risk:high", "status:blocked"]
+    body_file: planning/issues/034-voice-conversation.md
+    depends_on: [ptt-stt, tts-recommendations, advice-invalidation]
+    epic: epic-voice
+  - slug: epic-multigame
+    title: "[Epic] Multi-game contributor platform"
+    milestone: "Milestone 4 - Multi-Game and Community Platform"
+    labels: ["type:epic", "game:platform", "priority:p2", "status:ready"]
+    body_file: planning/issues/035-epic-multigame.md
+  - slug: adapter-api-freeze
+    title: "GameAdapter API review, versioning, and freeze"
+    milestone: "Milestone 4 - Multi-Game and Community Platform"
+    labels: ["type:feature", "area:game-adapter", "game:platform", "priority:p1", "risk:medium", "status:blocked"]
+    body_file: planning/issues/036-adapter-api-freeze.md
+    depends_on: [coaching-turn]
+    epic: epic-multigame
+  - slug: new-game-template
+    title: "New-game template and scaffold"
+    milestone: "Milestone 4 - Multi-Game and Community Platform"
+    labels: ["type:feature", "area:game-adapter", "area:community", "game:platform", "priority:p2", "risk:low", "status:blocked"]
+    body_file: planning/issues/037-new-game-template.md
+    depends_on: [adapter-api-freeze]
+    epic: epic-multigame
+  - slug: governance-activation
+    title: "Governance activation: CODEOWNERS mirror check, strategy-lane check, path labeler"
+    milestone: "Milestone 4 - Multi-Game and Community Platform"
+    labels: ["type:governance", "area:community", "game:platform", "priority:p1", "risk:medium", "status:blocked"]
+    body_file: planning/issues/038-governance-activation.md
+    depends_on: [ci-adaptation]
+    epic: epic-multigame
+  - slug: second-game-proof
+    title: "Second-game (synthetic) adapter proof"
+    milestone: "Milestone 4 - Multi-Game and Community Platform"
+    labels: ["type:test", "area:game-adapter", "game:platform", "priority:p1", "risk:high", "status:blocked"]
+    body_file: planning/issues/039-second-game-proof.md
+    depends_on: [new-game-template, adapter-api-freeze]
+    epic: epic-multigame
+  - slug: release-packaging
+    title: "Release packaging and signing for Augur desktop"
+    milestone: "Milestone 4 - Multi-Game and Community Platform"
+    labels: ["type:feature", "area:release", "game:platform", "priority:p1", "risk:high", "status:blocked"]
+    body_file: planning/issues/040-release-packaging.md
+    depends_on: [ci-adaptation]
+    epic: epic-multigame

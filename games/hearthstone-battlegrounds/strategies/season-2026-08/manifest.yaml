@@ -1,0 +1,7 @@
+schema_version: 1
+game: hearthstone-battlegrounds
+season: season-2026-08          # PLACEHOLDER id — rename to the live patch identifier when populated
+active: true
+patch: { min: null, max: null }
+status: skeleton                 # no document here is retrieval-ready
+documents: []                    # populated by `augur strategy validate --index`
