@@ -1,4 +1,15 @@
-# Contributing to ZeroClaw
+# Contributing to Augur
+
+> **Augur note.** Augur is a downstream fork of ZeroClaw; the engineering
+> conventions below are inherited from upstream and still apply to Rust work
+> in this repository. Augur-specific entry points:
+>
+> - **Strategy contributions (no Rust):** [docs/governance/strategy-review.md](docs/governance/strategy-review.md)
+> - **Proposing a new game:** [docs/governance/new-game-process.md](docs/governance/new-game-process.md)
+> - **Architecture and decisions:** [docs/architecture/overview.md](docs/architecture/overview.md), [docs/decisions/](docs/decisions/)
+> - Issues and PRs belong on **this** repository; generic runtime improvements
+>   should go to [upstream ZeroClaw](https://github.com/zeroclaw-labs/zeroclaw)
+>   instead ([upstream-sync policy](docs/architecture/upstream-sync.md)).
 
 Thanks for your interest. Every kind of contribution helps — code, docs, bug reports, design feedback. This file is the first stop; the full contributor guide lives in the [docs book](docs/book/src/contributing/how-to.md).
 

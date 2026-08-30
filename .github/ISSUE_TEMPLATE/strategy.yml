@@ -1,0 +1,34 @@
+name: Strategy Content
+description: Propose, correct, or dispute strategy-pack content (no Rust involved).
+title: "[Strategy]: "
+labels: ["type:strategy", "area:strategy"]
+body:
+  - type: input
+    id: game
+    attributes:
+      label: Game
+      placeholder: hearthstone-battlegrounds
+    validations: { required: true }
+  - type: input
+    id: scope
+    attributes:
+      label: Season / document scope
+      description: Season id and document id(s) or category (e.g. season-x/tribes/murlocs).
+    validations: { required: true }
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options: ["New content", "Correction", "Dispute existing guidance", "Deprecation", "Season lifecycle (new season / patch update)"]
+    validations: { required: true }
+  - type: textarea
+    id: claim
+    attributes:
+      label: Proposed guidance or correction
+    validations: { required: true }
+  - type: textarea
+    id: sources
+    attributes:
+      label: Evidence and sources
+      description: Replays, statistics, published guides (with attribution), reasoning.
+    validations: { required: true }

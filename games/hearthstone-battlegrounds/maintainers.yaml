@@ -1,0 +1,8 @@
+game: hearthstone-battlegrounds
+status: experimental
+maintainers:
+  - github: IftekharUddin
+    scopes: [adapter, strategy]
+strategy_maintainers: []
+# Governance: docs/governance/game-maintainers.md
+# CODEOWNERS must mirror this file (CI check tracked for Milestone 4).

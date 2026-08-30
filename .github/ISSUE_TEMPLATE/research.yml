@@ -1,0 +1,28 @@
+name: Research Spike
+description: A time-boxed investigation that must produce a recorded answer, not code.
+title: "[Research]: "
+labels: ["type:research"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question to resolve
+      description: The specific unknown. If it is architectural, say which decision record it feeds.
+    validations: { required: true }
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Repository / external evidence to gather
+      description: Paths, experiments, measurements, or sources to consult.
+    validations: { required: true }
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Definition of done
+      description: What artifact closes this (decision record update, doc section, measurement table)?
+    validations: { required: true }
+  - type: input
+    id: timebox
+    attributes:
+      label: Timebox
+      placeholder: e.g. 2 days

@@ -1,0 +1,31 @@
+# Augur game manifest — validated against ../../crates/augur-core (schema TBD in M0 issue)
+schema_version: 1
+game_id: hearthstone-battlegrounds
+display_name: "Hearthstone Battlegrounds"
+adapter_version: 0.0.0        # no adapter code exists yet; planning scaffold
+supported_os: [macos, windows]
+min_augur_version: 0.1.0
+status: experimental
+policy_review:
+  status: pending             # hard requirement before any release (docs/policy/game-policy-review.md)
+  history: []
+detection:
+  executables:
+    windows: ["Hearthstone.exe"]
+    macos: ["Hearthstone"]
+  window_titles: ["Hearthstone"]
+capture:
+  mode: window                # window-scoped capture only; display capture unsupported
+  target_max_width: 1920      # normalization band; adapter downscales beyond this
+  phases_of_interest: [shop, combat, hero_select]
+strategy_pack:
+  path: strategies
+  active_season: season-2026-08
+schemas:
+  game_state: schemas/game-state.schema.json
+  recommendation: schemas/recommendation.schema.json
+permissions:
+  required: [screen_recording]
+  optional: [microphone]
+voice_vocabulary: []          # M3: hero/tribe pronunciation hints
+fixtures: fixtures
