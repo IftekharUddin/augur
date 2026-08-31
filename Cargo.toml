@@ -22,7 +22,12 @@ resolver = "2"
 version = "0.8.4"
 edition = "2024"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/zeroclaw-labs/zeroclaw"
+# Augur fork: this is where every package in this workspace actually lives.
+# The inherited `zeroclaw-*` crates originated upstream, but Cargo's
+# `repository` field means "where this package's source is", not "who wrote
+# it first"; attribution lives in NOTICE. Every crate is `publish = false`,
+# so this reaches `cargo metadata` and generated docs, never crates.io.
+repository = "https://github.com/IftekharUddin/augur"
 rust-version = "1.96.0"
 
 [workspace.dependencies]
