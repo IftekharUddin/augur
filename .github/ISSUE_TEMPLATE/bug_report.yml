@@ -1,7 +1,8 @@
 name: Bug Report
-description: Report a reproducible defect in ZeroClaw
+description: Report a reproducible defect in Augur
 title: "[Bug]: "
 labels:
+  - "type:bug"
   - bug
 body:
   - type: markdown
@@ -16,18 +17,19 @@ body:
     attributes:
       label: Affected component
       options:
-        - runtime/daemon
-        - provider
-        - channel
-        - memory
-        - config/onboarding
-        - gateway/api
-        - web dashboard
-        - zerocode/tui
-        - tools
-        - plugins
-        - hardware/peripherals
-        - security/sandbox
+        - capture (window enumeration, frame capture)
+        - vision / state extraction
+        - strategy packs / retrieval
+        - recommendation / validation
+        - desktop app
+        - overlay
+        - voice
+        - game adapter
+        - augur runtime / RPC
+        - config / onboarding
+        - inherited ZeroClaw runtime
+        - security / privacy
+        - build, CI, or packaging
         - tooling/ci
         - docs
         - unknown
@@ -70,8 +72,8 @@ body:
       label: Steps to reproduce
       description: Please provide exact commands/config.
       placeholder: |
-        1. zeroclaw quickstart
-        2. zeroclaw daemon
+        1. Start Augur and select the game window
+        2. Trigger an observation
         3. Observe crash in logs
       render: bash
     validations:
@@ -101,7 +103,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: ZeroClaw version
+      label: Augur version
       placeholder: v0.1.0 / commit SHA
     validations:
       required: true

@@ -39,6 +39,9 @@ Columns:
 | `tests/architecture/{release_workflow,container_release,desktop_release}.rs` | modified | CI adaptation (#8) | Upstream's release contracts (notarization, Scoop credentials, container matrix, Trivy scanning) read the workflow files directly; eight tests fail once those files move. Path constants repointed at `.github/workflows-upstream/`, so the contracts keep guarding the parked pipeline and are intact when Augur revives it. | Low. Path joins only; the assertions themselves are untouched. |
 | Root `Cargo.toml` `members` | modified | Crate skeleton (#4) | The eleven Augur crates must be workspace members to build. Added on their own lines *after* upstream's single-line array rather than inside it, so an upstream edit to that line and Augur's addition are separate hunks instead of one contested one. | Low, by construction. |
 | `tests/test_architecture.rs` | modified | Crate skeleton (#4) | Registers the three Augur invariants next to upstream's, which is where a contributor looks for them. Three `#[path]` module declarations in one block at the end of the file; the detectors themselves are added files under `tests/architecture/augur_*.rs`. | Low. Appended block; upstream appends to its own list above it. |
+| `CNAME` | deleted | Branding (#2) | Contained `docs.zeroclawlabs.ai`, upstream's documentation domain. GitHub Pages is not enabled here so it was inert, but a file claiming a domain this project does not own contradicts the trademark disclaimer in `NOTICE`. | None. Upstream edits to a deleted file arrive as a re-add; delete it again. |
+| Root `Cargo.toml` `workspace.package.repository` | modified | Branding (#2) | Pointed at `zeroclaw-labs/zeroclaw`. Cargo's `repository` means where a package's source lives, not who wrote it first; attribution is `NOTICE`'s job. Every package is `publish = false`, so this reaches `cargo metadata` and generated docs, never crates.io. | Low. One line, in a file Augur already touches for `members`. |
+| `.github/ISSUE_TEMPLATE/{bug_report,feature_request,support_config}.yml` | modified | Branding (#2) | Said ZeroClaw to users, offered upstream's subsystem list (gateway, web dashboard, zerocode/tui, hardware) as bug components, and auto-labelled only `bug` / `enhancement` rather than Augur's `type:*` taxonomy. | Low. Upstream rarely edits these; when it does, Augur's version is authoritative. |
 | `.github/workflows/pr-title.yml` | *not modified* | n/a | Listed for the reader's benefit: it is inherited, still live, and deliberately unchanged. Conventional Commits with a required scope is Augur's rule too. | None. |
 
 ## Deliberately untouched
@@ -52,6 +55,9 @@ Recorded so a later contributor does not "tidy" them:
 - `crates/zeroclaw-*`, `apps/zerocode`, `apps/tauri`: upstream crate names are
   not product identity and are never renamed.
 - `.github/dependabot.yml`: not a workflow; left running.
+- `apps/tauri`: upstream's desktop shell, including its `productName` and
+  bundle identifier. Augur's desktop app is `apps/augur-desktop`; renaming
+  upstream's app to Augur would misattribute it.
 
 ## Pending touchpoints
 
