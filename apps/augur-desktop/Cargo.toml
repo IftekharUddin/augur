@@ -1,0 +1,16 @@
+[package]
+name = "augur-desktop"
+version.workspace = true
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "Augur desktop application. Talks to the runtime over the local JSON-RPC socket only."
+publish = false
+
+# ── Dependency rule, enforced, not asked for ──────────────────────────────
+# This manifest must never gain a `zeroclaw-*` or `augur-runtime` dependency.
+# Everything the desktop app knows arrives over the wire. Two gates check it:
+#   * scripts/ci/augur_desktop_no_runtime_dep_gate.sh (parses this file in CI)
+#   * tests/architecture/augur_desktop_rpc_only.rs
+# The rationale is decision 0001; the precedent is upstream's `apps/zerocode`,
+# which has been held to the same rule since it was written.
+[dependencies]

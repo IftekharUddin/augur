@@ -737,6 +737,99 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1505bd5d3d116872e7271a6d4e16d81d0c8570876c8de68093a09ac269d8aac0"
 
 [[package]]
+name = "augur-capture"
+version = "0.8.4"
+dependencies = [
+ "augur-core",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "augur-core"
+version = "0.8.4"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "augur-desktop"
+version = "0.8.4"
+
+[[package]]
+name = "augur-game-api"
+version = "0.8.4"
+dependencies = [
+ "augur-core",
+ "serde",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "augur-game-hearthstone-battlegrounds"
+version = "0.8.4"
+dependencies = [
+ "augur-core",
+ "augur-game-api",
+]
+
+[[package]]
+name = "augur-observation"
+version = "0.8.4"
+dependencies = [
+ "augur-core",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "augur-policy"
+version = "0.8.4"
+dependencies = [
+ "augur-core",
+ "augur-game-api",
+ "serde",
+]
+
+[[package]]
+name = "augur-recommendation"
+version = "0.8.4"
+dependencies = [
+ "augur-core",
+ "augur-strategy",
+]
+
+[[package]]
+name = "augur-runtime"
+version = "0.8.4"
+dependencies = [
+ "augur-capture",
+ "augur-core",
+ "augur-game-api",
+ "augur-game-hearthstone-battlegrounds",
+ "augur-observation",
+ "augur-policy",
+ "augur-recommendation",
+ "augur-strategy",
+ "augur-voice",
+]
+
+[[package]]
+name = "augur-strategy"
+version = "0.8.4"
+dependencies = [
+ "augur-core",
+ "serde",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "augur-voice"
+version = "0.8.4"
+dependencies = [
+ "augur-core",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

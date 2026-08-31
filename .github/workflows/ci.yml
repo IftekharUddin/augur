@@ -70,9 +70,14 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       # The RPC-only desktop rule Augur adopts in decision 0001 is the same rule
       # upstream enforces for its TUI. Keeping the upstream gate running here
-      # protects the precedent the Augur desktop gate will be copied from.
+      # protects the precedent the Augur desktop gate was copied from.
       - name: Guard zerocode RPC-only boundary
         run: bash scripts/ci/zerocode_no_zeroclaw_dep_gate.sh
+      # The same rule for Augur's own desktop app, plus `augur-runtime`.
+      # Manifest-only, so it fails in seconds without compiling anything; the
+      # matching architecture test additionally greps the sources.
+      - name: Guard augur-desktop RPC-only boundary
+        run: bash scripts/ci/augur_desktop_no_runtime_dep_gate.sh
 
   # ── Compile-heavy gates ──────────────────────────────────────────────────
   #

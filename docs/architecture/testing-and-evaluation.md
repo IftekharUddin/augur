@@ -7,14 +7,32 @@ privacy-reviewed, legally shareable fixtures.
 
 Upstream's five levels (`docs/book/src/contributing/testing.md`) plus
 architecture-invariant tests (`tests/test_architecture.rs` greps the source
-tree). Augur adds invariants:
+tree). Augur adds invariants, registered in `tests/test_architecture.rs` alongside
+upstream's and run by the `Test` job:
 
-- Platform crates contain no concrete game identifiers.
-- `apps/augur-desktop` links no `zeroclaw-*`/`augur-runtime` crates
-  (dependency gate script, copied from
-  `scripts/ci/zerocode_no_zeroclaw_dep_gate.sh`).
-- No input-synthesis symbols anywhere in Augur crates.
-- Strategy packs contain only allowed file types.
+- **No concrete game identifier in a platform crate**
+  (`tests/architecture/augur_game_isolation.rs`). Game ids are read from
+  `games/*/game.yaml`, so the gate covers games that do not exist yet.
+  `augur-runtime` is exempt: the registry naming every game exactly once, in
+  one file, is the design.
+- **`apps/augur-desktop` links no `zeroclaw-*` or `augur-runtime` crate**
+  (`tests/architecture/augur_desktop_rpc_only.rs`, plus
+  `scripts/ci/augur_desktop_no_runtime_dep_gate.sh`, copied from upstream's
+  zerocode gate). The test also catches the Cargo rename form,
+  `alias = { package = "augur-runtime" }`, which a key-only check would miss.
+- **No input-synthesis or process-memory symbols in Augur code**
+  (`tests/architecture/augur_no_input_synthesis.rs`). This is the "coach, not a
+  bot" enforcement seam: policy documents do not enforce anything, so the gate
+  greps for `CGEventPost`, `SendInput`, `XTestFakeKeyEvent`, `enigo`,
+  `ReadProcessMemory`, and their peers across sources *and* manifests, since
+  taking the dependency is the violation whether or not anything calls it yet.
+- Strategy packs contain only allowed file types (with the strategy validation
+  CLI).
+
+Each of the three carries a companion test that plants a violation in a
+throwaway fixture and asserts the scanner flags it. A gate that cannot fail is
+decoration, and these three in particular are load-bearing enough that
+"it passes" is not evidence on its own.
 
 ## Fixture-based tests
 
@@ -81,9 +99,9 @@ Member jobs today:
 |---|---|
 | Format | `cargo fmt --all -- --check` |
 | Docs Links | Relative links in Augur-owned Markdown resolve (`scripts/ci/augur_docs_links_gate.py`, with its own contract tests) |
-| Architecture Boundaries | The RPC-only desktop rule. Runs upstream's `zerocode_no_zeroclaw_dep_gate.sh` today; gains the Augur invariants (no game identifiers in platform crates, no `zeroclaw-*`/`augur-runtime` deps in `apps/augur-desktop`, no input-synthesis symbols) with the crate skeleton |
+| Architecture Boundaries | The RPC-only desktop rule, as a manifest-only check that fails in seconds: upstream's `zerocode_no_zeroclaw_dep_gate.sh` plus Augur's `augur_desktop_no_runtime_dep_gate.sh` |
 | Lint | `cargo clippy --locked --workspace --exclude zeroclaw-desktop --all-targets -- -D warnings` |
-| Test | `cargo test --locked --workspace --exclude zeroclaw-desktop --no-fail-fast`, after installing `expect` (a PTY regression needs it and panics without it) |
+| Test | `cargo test --locked --workspace --exclude zeroclaw-desktop --no-fail-fast`, after installing `expect` (a PTY regression needs it and panics without it). Includes the architecture invariants below |
 
 Two scope choices are deliberate and should be revisited, not inherited by
 accident:

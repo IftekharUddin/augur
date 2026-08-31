@@ -1,0 +1,11 @@
+[package]
+name = "augur-game-hearthstone-battlegrounds"
+version.workspace = true
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "Hearthstone Battlegrounds game adapter for Augur."
+publish = false
+
+[dependencies]
+augur-core = { path = "../../../crates/augur-core", version = "0.8.4" }
+augur-game-api = { path = "../../../crates/augur-game-api", version = "0.8.4" }

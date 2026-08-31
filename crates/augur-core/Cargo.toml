@@ -1,0 +1,13 @@
+[package]
+name = "augur-core"
+version.workspace = true
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "Game-agnostic identifiers and shared contracts for Augur."
+publish = false
+
+[dependencies]
+serde = { version = "1.0", default-features = false, features = ["derive", "std"] }
+
+[dev-dependencies]
+serde_json = { version = "1.0", default-features = false, features = ["std"] }
