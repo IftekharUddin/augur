@@ -123,6 +123,32 @@ Windows support, no window enumeration), overlay primitives, global hotkeys,
 client-side audio, auto-update, and a markdown-corpus retrieval engine
 (see [zeroclaw-reuse-audit.md](zeroclaw-reuse-audit.md)).
 
+## Crate layout
+
+Every crate below exists and compiles. What each one *does* arrives with its
+own issue; what each one is *allowed to do* is fixed now, because dependency
+directions are far cheaper to establish than to retrofit.
+
+| Crate | Owns | May depend on |
+|---|---|---|
+| `augur-core` | Identifiers, observation envelope, recommendation contract, confidence and evidence vocabulary | Nothing Augur |
+| `augur-game-api` | The `GameAdapter` trait, `GameManifest`, support status | `augur-core` |
+| `augur-capture` | Window enumeration and window-scoped frame capture | `augur-core` |
+| `augur-observation` | Match session state, observation lifecycle | `augur-core` |
+| `augur-strategy` | Strategy-pack data and deterministic retrieval | `augur-core` |
+| `augur-recommendation` | Citation checking, staleness, validation outcomes | `augur-core`, `augur-strategy` |
+| `augur-policy` | Whether a game may be offered at all | `augur-core`, `augur-game-api` |
+| `augur-voice` | Spoken coaching orchestration | `augur-core` |
+| `augur-runtime` | Adapter registry, session coordination, `augur/*` RPC methods | All of the above, plus game adapters |
+| `apps/augur-desktop` | The player-facing application | Nothing Augur. Talks over the local socket only |
+| `games/<id>/adapter` | One game | `augur-core`, `augur-game-api` |
+
+Two rows carry the weight. `augur-runtime` is the **only** crate permitted to
+name a concrete game, because the registry is the single place a game is
+mentioned; platform crates naming one fails the build. And
+`apps/augur-desktop` depends on nothing in this table, which is what makes
+decision 0001's boundary real rather than aspirational.
+
 ## Trust boundaries
 
 ```mermaid

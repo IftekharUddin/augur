@@ -1,0 +1,12 @@
+[package]
+name = "augur-strategy"
+version.workspace = true
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "Validated strategy-pack data and deterministic retrieval for Augur."
+publish = false
+
+[dependencies]
+augur-core = { path = "../augur-core", version = "0.8.4" }
+serde = { version = "1.0", default-features = false, features = ["derive", "std"] }
+thiserror = "2.0"

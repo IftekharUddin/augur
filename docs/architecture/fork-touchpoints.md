@@ -37,6 +37,8 @@ Columns:
 | `xtask/src/cmd/mdbook/hardware.rs`, `xtask/src/generate/spec.rs` | modified | CI adaptation (#8) | Both read the release and cross-platform-build workflows as the canonical prebuilt-binary target matrix; three `xtask` tests fail outright once those files move. One path constant each, repointed at `.github/workflows-upstream/`. | Low. A one-line path constant; upstream edits to surrounding code merge cleanly. |
 | `scripts/ci/release_attestation_contract_test.py`, `scripts/ci/install_release_tool.test.sh` | modified | CI adaptation (#8) | Same reason: both assert against workflow files that moved. Leaving them broken would strand a passing upstream guard. | Low, same shape. |
 | `tests/architecture/{release_workflow,container_release,desktop_release}.rs` | modified | CI adaptation (#8) | Upstream's release contracts (notarization, Scoop credentials, container matrix, Trivy scanning) read the workflow files directly; eight tests fail once those files move. Path constants repointed at `.github/workflows-upstream/`, so the contracts keep guarding the parked pipeline and are intact when Augur revives it. | Low. Path joins only; the assertions themselves are untouched. |
+| Root `Cargo.toml` `members` | modified | Crate skeleton (#4) | The eleven Augur crates must be workspace members to build. Added on their own lines *after* upstream's single-line array rather than inside it, so an upstream edit to that line and Augur's addition are separate hunks instead of one contested one. | Low, by construction. |
+| `tests/test_architecture.rs` | modified | Crate skeleton (#4) | Registers the three Augur invariants next to upstream's, which is where a contributor looks for them. Three `#[path]` module declarations in one block at the end of the file; the detectors themselves are added files under `tests/architecture/augur_*.rs`. | Low. Appended block; upstream appends to its own list above it. |
 | `.github/workflows/pr-title.yml` | *not modified* | n/a | Listed for the reader's benefit: it is inherited, still live, and deliberately unchanged. Conventional Commits with a required scope is Augur's rule too. | None. |
 
 ## Deliberately untouched
@@ -58,5 +60,4 @@ surprise:
 
 | Path | Expected in | Why |
 |---|---|---|
-| Root `Cargo.toml` `members` | Augur crate skeleton | New `crates/augur-*` and `apps/augur-desktop` workspace members. |
 | `crates/zeroclaw-runtime/src/rpc/dispatch.rs` | `augur/*` RPC methods | Upstream has no method-registration seam yet; the fork-local patch is isolated in one module and is the first upstream contribution candidate. |

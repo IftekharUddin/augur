@@ -20,3 +20,16 @@ mod desktop_release;
 
 #[path = "architecture/container_release.rs"]
 mod container_release;
+
+// ── Augur invariants ──────────────────────────────────────────────────────
+// Added by the fork. Kept in one block at the end so upstream's list above
+// merges without contest; see docs/architecture/fork-touchpoints.md.
+
+#[path = "architecture/augur_game_isolation.rs"]
+mod augur_game_isolation;
+
+#[path = "architecture/augur_desktop_rpc_only.rs"]
+mod augur_desktop_rpc_only;
+
+#[path = "architecture/augur_no_input_synthesis.rs"]
+mod augur_no_input_synthesis;

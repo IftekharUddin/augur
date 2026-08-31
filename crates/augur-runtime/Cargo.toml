@@ -1,0 +1,18 @@
+[package]
+name = "augur-runtime"
+version.workspace = true
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "Augur runtime layer: adapter registry and coaching coordination over the ZeroClaw runtime."
+publish = false
+
+[dependencies]
+augur-capture = { path = "../augur-capture", version = "0.8.4" }
+augur-core = { path = "../augur-core", version = "0.8.4" }
+augur-game-api = { path = "../augur-game-api", version = "0.8.4" }
+augur-game-hearthstone-battlegrounds = { path = "../../games/hearthstone-battlegrounds/adapter", version = "0.8.4" }
+augur-observation = { path = "../augur-observation", version = "0.8.4" }
+augur-policy = { path = "../augur-policy", version = "0.8.4" }
+augur-recommendation = { path = "../augur-recommendation", version = "0.8.4" }
+augur-strategy = { path = "../augur-strategy", version = "0.8.4" }
+augur-voice = { path = "../augur-voice", version = "0.8.4" }

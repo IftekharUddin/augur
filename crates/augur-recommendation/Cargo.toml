@@ -1,0 +1,11 @@
+[package]
+name = "augur-recommendation"
+version.workspace = true
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "Recommendation validation and staleness for Augur."
+publish = false
+
+[dependencies]
+augur-core = { path = "../augur-core", version = "0.8.4" }
+augur-strategy = { path = "../augur-strategy", version = "0.8.4" }

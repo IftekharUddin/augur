@@ -1,0 +1,11 @@
+[package]
+name = "augur-observation"
+version.workspace = true
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "Match session state and observation lifecycle for Augur."
+publish = false
+
+[dependencies]
+augur-core = { path = "../augur-core", version = "0.8.4" }
+thiserror = "2.0"

@@ -7,6 +7,12 @@
 > - **Strategy contributions (no Rust):** [docs/governance/strategy-review.md](docs/governance/strategy-review.md)
 > - **Proposing a new game:** [docs/governance/new-game-process.md](docs/governance/new-game-process.md)
 > - **Architecture and decisions:** [docs/architecture/overview.md](docs/architecture/overview.md), [docs/decisions/](docs/decisions/)
+> - **Rules the build enforces, not just documents:** three architecture
+>   invariants gate every pull request. Platform crates may not name a
+>   concrete game, `apps/augur-desktop` may not link `zeroclaw-*` or
+>   `augur-runtime`, and no Augur crate may reference input-synthesis or
+>   process-memory symbols. See
+>   [testing-and-evaluation.md](docs/architecture/testing-and-evaluation.md).
 > - Issues and PRs belong on **this** repository; generic runtime improvements
 >   should go to [upstream ZeroClaw](https://github.com/zeroclaw-labs/zeroclaw)
 >   instead ([upstream-sync policy](docs/architecture/upstream-sync.md)).
