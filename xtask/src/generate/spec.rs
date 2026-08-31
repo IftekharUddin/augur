@@ -1623,9 +1623,12 @@ mod tests {
             .exec()
             .unwrap();
         let exclusions = dist_target_exclusions(workspace_root_package(&meta).unwrap()).unwrap();
-        let release =
-            std::fs::read_to_string(root().join(".github/workflows/release-stable-manual.yml"))
-                .unwrap();
+        // Augur fork: parked under `.github/workflows-upstream/`.
+        // See docs/architecture/fork-touchpoints.md.
+        let release = std::fs::read_to_string(
+            root().join(".github/workflows-upstream/release-stable-manual.yml"),
+        )
+        .unwrap();
         assert!(release.contains("features --selection dist --target \"${{ matrix.target }}\""));
         assert!(!release.contains("excluded_features"));
         let cross_install = "- name: Install cross (MUSL targets)\n        if: matrix.use_cross\n        run: bash scripts/ci/install_release_tool.sh cross";
@@ -1641,7 +1644,7 @@ mod tests {
         assert!(!release.contains("cargo install tauri-cli"));
 
         let manual = std::fs::read_to_string(
-            root().join(".github/workflows/cross-platform-build-manual.yml"),
+            root().join(".github/workflows-upstream/cross-platform-build-manual.yml"),
         )
         .unwrap();
         assert!(manual.contains("distribution:"));

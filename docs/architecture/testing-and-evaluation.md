@@ -68,8 +68,41 @@ the right UI state).
 
 ## CI
 
-Upstream workflows are disabled at fork time (they target upstream's
-self-hosted runners and required checks). Augur CI (Milestone 0 issue)
-defines its own required gate on hosted runners: fmt, clippy, arch tests,
-unit/component, strategy validation, docs links. Heavy platform matrices run
-scheduled, mirroring upstream's `platform-tests.yml` split.
+Augur's gate is `.github/workflows/ci.yml`, on GitHub-hosted runners only.
+Branch protection on `master` requires exactly one check,
+**`Augur Required Gate`**: an aggregate job that fails if any member job
+failed or was cancelled. Internal jobs can be added or split without touching
+branch-protection settings; this is upstream's aggregate pattern, kept
+deliberately.
+
+Member jobs today:
+
+| Job | What it gates |
+|---|---|
+| Format | `cargo fmt --all -- --check` |
+| Docs Links | Relative links in Augur-owned Markdown resolve (`scripts/ci/augur_docs_links_gate.py`, with its own contract tests) |
+| Architecture Boundaries | The RPC-only desktop rule. Runs upstream's `zerocode_no_zeroclaw_dep_gate.sh` today; gains the Augur invariants (no game identifiers in platform crates, no `zeroclaw-*`/`augur-runtime` deps in `apps/augur-desktop`, no input-synthesis symbols) with the crate skeleton |
+| Lint | `cargo clippy --locked --workspace --exclude zeroclaw-desktop --all-targets -- -D warnings` |
+| Test | `cargo test --locked --workspace --exclude zeroclaw-desktop --no-fail-fast`, after installing `expect` (a PTY regression needs it and panics without it) |
+
+Two scope choices are deliberate and should be revisited, not inherited by
+accident:
+
+- The compile jobs run the **default feature surface**, not upstream's
+  `ci-all`. The full feature matrix costs far more wall-clock on hosted
+  runners than a coaching fork needs per pull request.
+- `zeroclaw-desktop` is excluded exactly as upstream excludes it: it pulls
+  GTK/glib system libraries the gate does not install.
+
+Strategy-pack validation joins the gate when the validation CLI exists
+(Milestone 1); the extraction and recommendation evaluation harnesses join as
+they land. Heavy platform matrices run scheduled, mirroring upstream's
+`platform-tests.yml` split, once capture providers exist.
+
+Every inherited upstream workflow is parked under
+`.github/workflows-upstream/` with the reason it was parked and what would
+bring it back; `.github/workflows/pr-title.yml` (Conventional Commits with a
+required scope) was kept running unchanged. Note that `dev/ci.sh`, referenced
+from the inherited `CONTRIBUTING.md`, still reproduces *upstream's* Docker CI,
+not this gate; the closest local equivalent to the Augur gate is the five
+commands in the table above.

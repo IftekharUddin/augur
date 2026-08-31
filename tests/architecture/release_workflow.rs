@@ -65,8 +65,13 @@ fn is_windows_system_directory(directory: &Path) -> bool {
 }
 
 fn workflow(name: &str) -> String {
+    // Augur fork: the inherited upstream workflows are parked under
+    // `.github/workflows-upstream/` so they cannot fire with upstream's runners
+    // and publishing identity. These release contracts still guard them, so the
+    // pipeline is intact whenever Augur revives it.
+    // See docs/architecture/fork-touchpoints.md.
     let workflow_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join(".github/workflows")
+        .join(".github/workflows-upstream")
         .join(name);
     fs::read_to_string(&workflow_path)
         .unwrap_or_else(|error| panic!("failed to read {}: {error}", workflow_path.display()))
@@ -131,8 +136,8 @@ fn yaml_block<'a>(document: &'a str, header: &str) -> &'a str {
 
 #[test]
 fn macos_desktop_release_notarizes_published_dmg() {
-    let workflow_path =
-        Path::new(env!("CARGO_MANIFEST_DIR")).join(".github/workflows/release-stable-manual.yml");
+    let workflow_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join(".github/workflows-upstream/release-stable-manual.yml");
     let workflow = fs::read_to_string(&workflow_path)
         .unwrap_or_else(|error| panic!("failed to read {}: {error}", workflow_path.display()));
     let macos_job = workflow
@@ -195,7 +200,7 @@ fn package_publishers_use_canonical_sources_and_scoped_credentials() {
     );
     assert!(
         !Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join(".github/workflows/pub-homebrew-core.yml")
+            .join(".github/workflows-upstream/pub-homebrew-core.yml")
             .exists(),
         "the redundant project-owned Homebrew publisher must stay retired"
     );

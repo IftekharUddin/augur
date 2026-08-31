@@ -30,8 +30,14 @@ fn windows_desktop_manifest_selects_common_controls_v6() {
 #[test]
 fn macos_desktop_sidecar_embeds_the_web_artifact() {
     let root = Path::new(env!("CARGO_MANIFEST_DIR"));
-    let workflow = fs::read_to_string(root.join(".github/workflows/release-stable-manual.yml"))
-        .expect("release workflow should be readable");
+    // Augur fork: the inherited upstream workflows are parked under
+    // `.github/workflows-upstream/` so they cannot fire with upstream's runners
+    // and publishing identity. These release contracts still guard them, so the
+    // pipeline is intact whenever Augur revives it.
+    // See docs/architecture/fork-touchpoints.md.
+    let workflow =
+        fs::read_to_string(root.join(".github/workflows-upstream/release-stable-manual.yml"))
+            .expect("release workflow should be readable");
     let macos_job = workflow
         .split_once("\n  build-desktop:\n")
         .and_then(|(_, rest)| rest.split_once("\n  build-desktop-linux:\n"))
