@@ -78,3 +78,125 @@ pattern.**
 - The existing upstream Tauri shell's HTTP path (`gateway_client.rs`) is not
   reused for coaching; parts of the shell (tray, sidecar spawn, macOS
   permission FFI in `apps/tauri/src/macos/permissions.rs`) are reused.
+
+## Sources: measured latency
+
+The objection this decision has to answer is latency: a coaching interface is
+interactive, and an inter-process hop is not free. Answered with numbers rather
+than argument.
+
+`scripts/dev/augur_rpc_latency_probe.py` starts a real `zeroclaw daemon`
+against a throwaway configuration directory and drives it from a
+dependency-free NDJSON client. Every figure is a full client-observed round
+trip: bytes written, bytes read back, JSON parsed, nothing subtracted. The
+kernel is built with the `ci` profile (release with thin LTO); an unoptimized
+build would measure rustc rather than architecture. Reproduce with:
+
+```bash
+cargo build --locked --profile ci --bin zeroclaw
+python3 scripts/dev/augur_rpc_latency_probe.py --binary target/ci/zeroclaw --iterations 200
+```
+
+The `Augur RPC Latency Probe` workflow runs the same probe on `macos-latest`,
+`windows-latest`, and `ubuntu-latest`, so the Windows named-pipe transport is
+measured rather than extrapolated from the Unix socket. They carry identical
+NDJSON framing but are different kernel objects.
+
+### macOS, Unix domain socket
+
+Developer machine, macOS 15 arm64, 10 cores. 200 iterations, each opening a
+fresh connection.
+
+| Operation | n | min (ms) | median (ms) | p95 (ms) | max (ms) |
+|---|---:|---:|---:|---:|---:|
+| connect (fresh socket) | 200 | 0.009 | 0.027 | 0.220 | 1.681 |
+| initialize (handshake) | 200 | 0.064 | 0.263 | 2.461 | 9.667 |
+| status (first on connection) | 200 | 0.037 | 0.137 | 2.141 | 9.831 |
+| status (warm connection) | 200 | 0.032 | 0.100 | 3.220 | 10.880 |
+
+Cold path, connect plus initialize plus status: **0.427 ms median**.
+
+### Hosted runners, all three transports
+
+GitHub-hosted runners, 200 iterations each, from the `Augur RPC Latency Probe`
+workflow. These are the numbers to trust over the developer-machine table
+above: the runner is not simultaneously compiling anything, so the tails
+reflect the transport rather than the load around it.
+
+**Linux, `ubuntu-latest`, Unix domain socket**
+
+| Operation | n | min (ms) | median (ms) | p95 (ms) | max (ms) |
+|---|---:|---:|---:|---:|---:|
+| connect (fresh socket) | 200 | 0.004 | 0.009 | 0.016 | 0.036 |
+| initialize (handshake) | 200 | 0.102 | 0.196 | 0.266 | 0.539 |
+| status (first on connection) | 200 | 0.056 | 0.092 | 0.141 | 0.323 |
+| status (warm connection) | 200 | 0.036 | 0.077 | 0.117 | 0.162 |
+
+Cold path: **0.297 ms median**.
+
+**macOS, `macos-latest`, Unix domain socket**
+
+| Operation | n | min (ms) | median (ms) | p95 (ms) | max (ms) |
+|---|---:|---:|---:|---:|---:|
+| connect (fresh socket) | 200 | 0.007 | 0.011 | 0.020 | 0.054 |
+| initialize (handshake) | 200 | 0.097 | 0.151 | 0.223 | 1.820 |
+| status (first on connection) | 200 | 0.042 | 0.062 | 0.133 | 0.298 |
+| status (warm connection) | 200 | 0.036 | 0.059 | 0.115 | 0.239 |
+
+Cold path: **0.225 ms median**.
+
+**Windows, `windows-latest`, named pipe**
+
+| Operation | n | min (ms) | median (ms) | p95 (ms) | max (ms) |
+|---|---:|---:|---:|---:|---:|
+| connect (fresh socket) | 200 | 0.016 | 0.025 | 0.032 | 0.069 |
+| initialize (handshake) | 200 | 0.208 | 0.271 | 0.375 | 0.781 |
+| status (first on connection) | 200 | 0.092 | 0.133 | 0.176 | 0.322 |
+| status (warm connection) | 200 | 0.084 | 0.105 | 0.164 | 0.449 |
+
+Cold path: **0.429 ms median**.
+
+Windows is consistently the slowest of the three, by roughly a factor of two
+against macOS, which is what one would expect from a named pipe against a Unix
+socket. It is also the platform where the number matters least in relative
+terms, because a factor of two on a quarter of a millisecond is still a
+quarter of a millisecond.
+
+The slowest p95 anywhere in this matrix is **0.375 ms**, on the Windows
+handshake, which a client performs once per connection.
+
+### Reading these against the budgets
+
+`docs/product/mvp.md` sets end-to-end manual-trigger-to-advice at 5s p50 and 9s
+p95, with the tightest per-stage budget, validation and publish, at 20ms and
+50ms.
+
+The cold path a desktop client pays once at startup, connect plus initialize
+plus status, is a fraction of a millisecond at the median. A warm connection,
+which is what a running application actually has, answers a query in about a
+tenth of a millisecond. Against the p50 end-to-end budget that is roughly one
+ten-thousandth; against the tightest single stage, a few percent. The pipeline
+is dominated by a vision model call measured in seconds, and no plausible
+reading of these numbers changes that by three orders of magnitude.
+
+### What is deliberately not measured here
+
+**Streamed chunk latency end to end.** Measuring it needs a live model
+provider, which means credentials and spend. What the *transport* contributes
+is bounded by what is measured above: a `session/update` notification is one
+direction of a frame whose full round trip, request plus dispatch plus
+response, is about a tenth of a millisecond warm. Per-chunk transport overhead
+is therefore well under a tenth of a millisecond against a provider streaming
+tokens tens of milliseconds apart. That is an inference from the transport
+measurement, not a measurement of streaming, and it is recorded as such.
+
+### Revisit criteria, restated as thresholds
+
+This decision is worth reopening if the measured warm round trip exceeds **5ms
+at p95 on any supported platform**, which would make it a visible fraction of
+the 20ms validation-and-publish budget, or if upstream changes the socket
+transport contract.
+
+The worst measured warm p95 across all three platforms is **0.164 ms**, on
+Windows: about thirty times under the threshold. Re-run the probe workflow to
+check this claim rather than trusting this paragraph.
