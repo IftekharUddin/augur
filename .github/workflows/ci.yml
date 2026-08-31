@@ -121,6 +121,13 @@ jobs:
           save-if: ${{ github.ref == 'refs/heads/master' }}
       - name: Ensure web/dist placeholder exists
         run: mkdir -p web/dist && touch web/dist/.gitkeep
+      # `expect` drives the PTY regression in
+      # `tests/component/daemon_startup_feedback.rs`, which panics rather than
+      # skipping when the binary is absent. Installed here for the same reason
+      # upstream installs it: the test is about terminal job control, and there
+      # is no way to exercise that without a pseudo-terminal.
+      - name: Install test system dependencies
+        run: bash scripts/ci/apt_install.sh expect
       - name: Run tests
         run: >-
           cargo test --locked --workspace --exclude zeroclaw-desktop
