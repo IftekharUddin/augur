@@ -118,10 +118,52 @@ Cold path, connect plus initialize plus status: **0.427 ms median**.
 
 ### Hosted runners, all three transports
 
-Pending the first run of the `Augur RPC Latency Probe` workflow. This section
-is deliberately left explicit rather than omitted: the Windows named-pipe
-figure is a stated gap in the evidence until it is filled, and the record
-should not read as though all platforms were measured when one was not.
+GitHub-hosted runners, 200 iterations each, from the `Augur RPC Latency Probe`
+workflow. These are the numbers to trust over the developer-machine table
+above: the runner is not simultaneously compiling anything, so the tails
+reflect the transport rather than the load around it.
+
+**Linux, `ubuntu-latest`, Unix domain socket**
+
+| Operation | n | min (ms) | median (ms) | p95 (ms) | max (ms) |
+|---|---:|---:|---:|---:|---:|
+| connect (fresh socket) | 200 | 0.004 | 0.009 | 0.016 | 0.036 |
+| initialize (handshake) | 200 | 0.102 | 0.196 | 0.266 | 0.539 |
+| status (first on connection) | 200 | 0.056 | 0.092 | 0.141 | 0.323 |
+| status (warm connection) | 200 | 0.036 | 0.077 | 0.117 | 0.162 |
+
+Cold path: **0.297 ms median**.
+
+**macOS, `macos-latest`, Unix domain socket**
+
+| Operation | n | min (ms) | median (ms) | p95 (ms) | max (ms) |
+|---|---:|---:|---:|---:|---:|
+| connect (fresh socket) | 200 | 0.007 | 0.011 | 0.020 | 0.054 |
+| initialize (handshake) | 200 | 0.097 | 0.151 | 0.223 | 1.820 |
+| status (first on connection) | 200 | 0.042 | 0.062 | 0.133 | 0.298 |
+| status (warm connection) | 200 | 0.036 | 0.059 | 0.115 | 0.239 |
+
+Cold path: **0.225 ms median**.
+
+**Windows, `windows-latest`, named pipe**
+
+| Operation | n | min (ms) | median (ms) | p95 (ms) | max (ms) |
+|---|---:|---:|---:|---:|---:|
+| connect (fresh socket) | 200 | 0.016 | 0.025 | 0.032 | 0.069 |
+| initialize (handshake) | 200 | 0.208 | 0.271 | 0.375 | 0.781 |
+| status (first on connection) | 200 | 0.092 | 0.133 | 0.176 | 0.322 |
+| status (warm connection) | 200 | 0.084 | 0.105 | 0.164 | 0.449 |
+
+Cold path: **0.429 ms median**.
+
+Windows is consistently the slowest of the three, by roughly a factor of two
+against macOS, which is what one would expect from a named pipe against a Unix
+socket. It is also the platform where the number matters least in relative
+terms, because a factor of two on a quarter of a millisecond is still a
+quarter of a millisecond.
+
+The slowest p95 anywhere in this matrix is **0.375 ms**, on the Windows
+handshake, which a client performs once per connection.
 
 ### Reading these against the budgets
 
@@ -150,7 +192,11 @@ measurement, not a measurement of streaming, and it is recorded as such.
 
 ### Revisit criteria, restated as thresholds
 
-This decision is worth reopening if the measured warm round trip exceeds 5ms at
-p95 on any supported platform, which would make it a visible fraction of the
-validation-and-publish budget, or if upstream changes the socket transport
-contract. Neither is true today.
+This decision is worth reopening if the measured warm round trip exceeds **5ms
+at p95 on any supported platform**, which would make it a visible fraction of
+the 20ms validation-and-publish budget, or if upstream changes the socket
+transport contract.
+
+The worst measured warm p95 across all three platforms is **0.164 ms**, on
+Windows: about thirty times under the threshold. Re-run the probe workflow to
+check this claim rather than trusting this paragraph.
