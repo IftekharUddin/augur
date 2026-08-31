@@ -61,6 +61,17 @@ left in place.
   self-hosted runner selectors with hosted ones, and adding it to the `needs:`
   list of the `gate` job in `.github/workflows/ci.yml`. A check that is not in
   that list is not required, whatever it reports.
+- **Four places in the repository read files in this directory by path** and
+  must be flipped back if one is revived: `RELEASE_WORKFLOW` in
+  `xtask/src/cmd/mdbook/hardware.rs`, the two workflow reads in
+  `release_workflows_delegate_target_policy_to_generator`
+  (`xtask/src/generate/spec.rs`), `WORKFLOW_PATH` in
+  `scripts/ci/release_attestation_contract_test.py`, and
+  `cross_platform_workflow` in `scripts/ci/install_release_tool.test.sh`.
+  Upstream treats `release-stable-manual.yml` and
+  `cross-platform-build-manual.yml` as the canonical prebuilt-binary target
+  matrix, so its documentation generator and release-contract tests follow the
+  file wherever it lives. They fail loudly, not silently, if the path is wrong.
 - Do not edit files in this directory to "fix" them in place. They are the
   upstream baseline; keeping them byte-identical to upstream is what makes
   `git merge upstream/master` cheap. Fixes belong in the revived copy.

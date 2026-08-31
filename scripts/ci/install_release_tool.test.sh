@@ -3,7 +3,9 @@ set -euo pipefail
 
 root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 installer="${root_dir}/scripts/ci/install_release_tool.sh"
-cross_platform_workflow="${root_dir}/.github/workflows/cross-platform-build-manual.yml"
+# Augur fork: parked under `.github/workflows-upstream/`.
+# See docs/architecture/fork-touchpoints.md.
+cross_platform_workflow="${root_dir}/.github/workflows-upstream/cross-platform-build-manual.yml"
 
 assert_manifest() {
   local tool="$1"

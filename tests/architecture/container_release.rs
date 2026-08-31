@@ -4,7 +4,12 @@ use std::{collections::HashSet, fs, path::Path};
 
 fn workflow(name: &str) -> String {
     let root = Path::new(env!("CARGO_MANIFEST_DIR"));
-    fs::read_to_string(root.join(".github/workflows").join(name))
+    // Augur fork: the inherited upstream workflows are parked under
+    // `.github/workflows-upstream/` so they cannot fire with upstream's runners
+    // and publishing identity. These release contracts still guard them, so the
+    // pipeline is intact whenever Augur revives it.
+    // See docs/architecture/fork-touchpoints.md.
+    fs::read_to_string(root.join(".github/workflows-upstream").join(name))
         .unwrap_or_else(|error| panic!("failed to read {name}: {error}"))
 }
 

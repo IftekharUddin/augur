@@ -83,7 +83,7 @@ Member jobs today:
 | Docs Links | Relative links in Augur-owned Markdown resolve (`scripts/ci/augur_docs_links_gate.py`, with its own contract tests) |
 | Architecture Boundaries | The RPC-only desktop rule. Runs upstream's `zerocode_no_zeroclaw_dep_gate.sh` today; gains the Augur invariants (no game identifiers in platform crates, no `zeroclaw-*`/`augur-runtime` deps in `apps/augur-desktop`, no input-synthesis symbols) with the crate skeleton |
 | Lint | `cargo clippy --locked --workspace --exclude zeroclaw-desktop --all-targets -- -D warnings` |
-| Test | `cargo test --locked --workspace --exclude zeroclaw-desktop` |
+| Test | `cargo test --locked --workspace --exclude zeroclaw-desktop --no-fail-fast` |
 
 Two scope choices are deliberate and should be revisited, not inherited by
 accident:

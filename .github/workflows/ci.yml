@@ -122,7 +122,9 @@ jobs:
       - name: Ensure web/dist placeholder exists
         run: mkdir -p web/dist && touch web/dist/.gitkeep
       - name: Run tests
-        run: cargo test --locked --workspace --exclude zeroclaw-desktop
+        run: >-
+          cargo test --locked --workspace --exclude zeroclaw-desktop
+          --no-fail-fast
 
   # ── Required gate ────────────────────────────────────────────────────────
   # Branch protection requires only this job. `if: always()` plus an explicit
