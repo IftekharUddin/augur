@@ -19,6 +19,10 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 /// Platform crates: game-agnostic by contract.
+///
+/// `src` only, deliberately. A platform crate's *tests* legitimately need a
+/// concrete game in a fixture, and a contract test with no realistic payload
+/// tests nothing. What must stay game-free is the code that ships.
 const PLATFORM_CRATES: &[&str] = &[
     "crates/augur-core/src",
     "crates/augur-game-api/src",

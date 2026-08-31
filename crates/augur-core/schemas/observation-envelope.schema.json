@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GameStateEnvelope",
+  "description": "One observation of game state.\n\nEvery recommendation is bound to the [`ObservationId`] of the envelope it\nwas generated from. When a newer envelope's `change_summary` intersects a\nrecommendation's invalidation triggers, that recommendation is dead. See\n[`crate::recommendation::Validity`].",
+  "type": "object",
+  "properties": {
+    "adapter_version": {
+      "description": "Version of the adapter that produced this envelope.",
+      "$ref": "#/$defs/AdapterVersion"
+    },
+    "change_summary": {
+      "description": "What changed relative to the previous envelope. Drives invalidation.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "confidence": {
+      "description": "Overall extraction confidence. Per-field confidence is in `evidence`.",
+      "$ref": "#/$defs/Confidence"
+    },
+    "evidence": {
+      "description": "Per-field extraction evidence.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/FieldEvidence"
+      }
+    },
+    "game_id": {
+      "description": "Which game this observation is of.",
+      "$ref": "#/$defs/GameId"
+    },
+    "game_version": {
+      "description": "Season or patch identifier, as the adapter reports it.",
+      "type": "string"
+    },
+    "observation_id": {
+      "description": "This observation's identity.",
+      "$ref": "#/$defs/ObservationId"
+    },
+    "phase": {
+      "description": "Adapter-classified phase, for example `shop` or `combat`.",
+      "type": "string"
+    },
+    "privacy": {
+      "description": "Retention classification for everything this envelope refers to.",
+      "$ref": "#/$defs/Privacy"
+    },
+    "schema_version": {
+      "description": "Envelope schema version. See [`crate::ids::CURRENT_SCHEMA_VERSION`].",
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "session_id": {
+      "description": "Coaching session this observation belongs to.",
+      "$ref": "#/$defs/SessionId"
+    },
+    "source": {
+      "description": "Provenance of the frame this was extracted from.",
+      "$ref": "#/$defs/CaptureSource"
+    },
+    "state": {
+      "description": "The game-owned state payload.\n\nDeliberately untyped here. This crate must not know what a Battlegrounds\nboard looks like, and the architecture test enforces that. The payload\nis validated against the adapter's own schema\n(`games/<id>/schemas/game-state.schema.json`), which is where a game's\nvocabulary belongs."
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "game_id",
+    "game_version",
+    "adapter_version",
+    "session_id",
+    "observation_id",
+    "phase",
+    "source",
+    "confidence",
+    "change_summary",
+    "privacy",
+    "evidence",
+    "state"
+  ],
+  "$defs": {
+    "AdapterVersion": {
+      "description": "Version of the game adapter that produced an envelope, so a stored\nobservation can be interpreted by the adapter version that wrote it.",
+      "type": "string"
+    },
+    "CaptureSource": {
+      "description": "Where a frame came from.\n\n`frame_hash` is a hash, never pixels. Nothing in Augur persists frame\ncontents by default, and a type that could carry them would make that\npromise unenforceable.",
+      "type": "object",
+      "properties": {
+        "frame_hash": {
+          "description": "Content hash of the normalized frame, used for change detection.",
+          "type": "string"
+        },
+        "kind": {
+          "description": "How the frame was obtained, for example `screen_capture`.",
+          "type": "string"
+        },
+        "window_id": {
+          "description": "Opaque, platform-specific window handle. Not a title, not a path.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "window_id",
+        "frame_hash"
+      ]
+    },
+    "Confidence": {
+      "description": "Confidence in the closed interval 0.0 to 1.0. NaN is not a valid value.",
+      "type": "number",
+      "maximum": 1.0,
+      "minimum": 0.0
+    },
+    "FieldEvidence": {
+      "description": "Per-field extraction evidence.\n\nThe envelope's top-level confidence is an overall figure; this is where a\nconsumer learns that `gold` was read with near-certainty while `tier` was a\nguess. The UI renders the difference, and the recommendation validator uses\nit to refuse advice that depends on a field nobody actually observed.",
+      "type": "object",
+      "properties": {
+        "confidence": {
+          "description": "Confidence for this field specifically.",
+          "$ref": "#/$defs/Confidence"
+        },
+        "field": {
+          "description": "Dotted path of the field within the game-owned `state` payload.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "confidence"
+      ]
+    },
+    "GameId": {
+      "description": "Stable identifier for a supported game, matching the directory name\nunder `games/` and the `id` field of that game's `game.yaml`.\n\nA `GameId` value may exist in platform crates; a *literal* game id may\nnot. The architecture test draws that line.",
+      "type": "string"
+    },
+    "ObservationId": {
+      "description": "Identifies one observation of game state.\n\nLoad-bearing: every recommendation is bound to the `ObservationId` it\nwas generated from, and a recommendation whose observation has been\nsuperseded is invalidated rather than shown as current. This is the\nidentifier that makes \"never silently stale\" checkable.",
+      "type": "string"
+    },
+    "Privacy": {
+      "description": "Privacy classification of the data a record refers to.\n\nCarried on the envelope so that anything downstream, logs, diagnostics\nbundles, feedback uploads, can make a retention decision without needing to\nknow how the data was produced.",
+      "oneOf": [
+        {
+          "description": "Derived from a frame that exists only for the duration of a turn and is\nnever persisted. The default for screen capture.",
+          "type": "string",
+          "const": "local-frame-transient"
+        },
+        {
+          "description": "Text derived from a frame, retained locally as part of match state.",
+          "type": "string",
+          "const": "local-derived-text"
+        },
+        {
+          "description": "The user explicitly opted in to retaining this record.",
+          "type": "string",
+          "const": "user-retained"
+        }
+      ]
+    },
+    "SessionId": {
+      "description": "Identifies one coaching session: a run of the app bound to one game and\none capture target. Outlives individual matches.",
+      "type": "string"
+    }
+  }
+}

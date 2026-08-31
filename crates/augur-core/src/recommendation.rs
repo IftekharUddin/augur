@@ -22,6 +22,8 @@ use crate::ids::{GameId, ObservationId, SchemaVersion, SessionId};
 
 /// One concrete thing the player could do, in priority order.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema-export", derive(schemars::JsonSchema))]
+#[serde(deny_unknown_fields)]
 pub struct RecommendedAction {
     /// 1 is the top recommendation.
     pub priority: u8,
@@ -43,6 +45,8 @@ pub struct RecommendedAction {
 /// document that was not retrieved for this turn, which is only checkable
 /// because the citations live in their own list.
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema-export", derive(schemars::JsonSchema))]
+#[serde(deny_unknown_fields)]
 pub struct RecommendationEvidence {
     /// Facts read from the observation. Each should be traceable to a field in
     /// the envelope.
@@ -63,6 +67,8 @@ pub struct RecommendationEvidence {
 /// `invalidated_by` is a claim that nothing observable can falsify this
 /// advice, which should be rare and deliberate.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema-export", derive(schemars::JsonSchema))]
+#[serde(deny_unknown_fields)]
 pub struct Validity {
     /// Wall-clock expiry, when the advice is time-bounded rather than
     /// state-bounded. `None` means it dies only on state change.
@@ -73,6 +79,8 @@ pub struct Validity {
 
 /// A single piece of coaching advice bound to one observation.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema-export", derive(schemars::JsonSchema))]
+#[serde(deny_unknown_fields)]
 pub struct Recommendation {
     /// Contract schema version. See [`crate::ids::CURRENT_SCHEMA_VERSION`].
     pub schema_version: SchemaVersion,

@@ -17,6 +17,26 @@ use serde::{Deserialize, Serialize};
 #[serde(try_from = "f32", into = "f32")]
 pub struct Confidence(f32);
 
+// Hand-written rather than derived. The wire form is a bare number, so a
+// derived schema would say `number` and stop there, and a non-Rust consumer
+// would lose the one guarantee this newtype exists to provide. Stating the
+// bounds here gives them the same contract the Rust type gives.
+#[cfg(feature = "schema-export")]
+impl schemars::JsonSchema for Confidence {
+    fn schema_name() -> std::borrow::Cow<'static, str> {
+        "Confidence".into()
+    }
+
+    fn json_schema(_generator: &mut schemars::SchemaGenerator) -> schemars::Schema {
+        schemars::json_schema!({
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "description": "Confidence in the closed interval 0.0 to 1.0. NaN is not a valid value.",
+        })
+    }
+}
+
 /// Why a [`Confidence`] could not be constructed.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ConfidenceError {
@@ -81,6 +101,8 @@ impl From<Confidence> for f32 {
 /// guess. The UI renders the difference, and the recommendation validator uses
 /// it to refuse advice that depends on a field nobody actually observed.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema-export", derive(schemars::JsonSchema))]
+#[serde(deny_unknown_fields)]
 pub struct FieldEvidence {
     /// Dotted path of the field within the game-owned `state` payload.
     pub field: String,
@@ -94,6 +116,7 @@ pub struct FieldEvidence {
 /// bundles, feedback uploads, can make a retention decision without needing to
 /// know how the data was produced.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema-export", derive(schemars::JsonSchema))]
 #[serde(rename_all = "kebab-case")]
 pub enum Privacy {
     /// Derived from a frame that exists only for the duration of a turn and is
