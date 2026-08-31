@@ -1,0 +1,193 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Recommendation",
+  "description": "A single piece of coaching advice bound to one observation.",
+  "type": "object",
+  "properties": {
+    "actions": {
+      "description": "Ranked concrete actions.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/RecommendedAction"
+      }
+    },
+    "confidence": {
+      "description": "How confident the coach is in this advice as a whole.",
+      "$ref": "#/$defs/Confidence"
+    },
+    "evidence": {
+      "description": "What this advice rests on, split by kind of claim.",
+      "$ref": "#/$defs/RecommendationEvidence"
+    },
+    "game_id": {
+      "description": "Which game this advice is for.",
+      "$ref": "#/$defs/GameId"
+    },
+    "observation_id": {
+      "description": "The observation this advice describes. The binding that makes staleness\ndetectable rather than a matter of opinion.",
+      "$ref": "#/$defs/ObservationId"
+    },
+    "rationale": {
+      "description": "Why, in prose, for a player who wants to understand rather than obey.",
+      "type": "string"
+    },
+    "schema_version": {
+      "description": "Contract schema version. See [`crate::ids::CURRENT_SCHEMA_VERSION`].",
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "session_id": {
+      "description": "Coaching session this advice belongs to.",
+      "$ref": "#/$defs/SessionId"
+    },
+    "summary": {
+      "description": "One-line advice, the thing a player reads mid-turn.",
+      "type": "string"
+    },
+    "validity": {
+      "description": "Conditions under which this advice dies.",
+      "$ref": "#/$defs/Validity"
+    },
+    "warnings": {
+      "description": "Caveats the player should see alongside the advice, for example that a\nfield could not be read.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "game_id",
+    "session_id",
+    "observation_id",
+    "summary",
+    "actions",
+    "rationale",
+    "confidence",
+    "evidence",
+    "warnings",
+    "validity"
+  ],
+  "$defs": {
+    "Confidence": {
+      "description": "Confidence in the closed interval 0.0 to 1.0. NaN is not a valid value.",
+      "type": "number",
+      "maximum": 1.0,
+      "minimum": 0.0
+    },
+    "GameId": {
+      "description": "Stable identifier for a supported game, matching the directory name\nunder `games/` and the `id` field of that game's `game.yaml`.\n\nA `GameId` value may exist in platform crates; a *literal* game id may\nnot. The architecture test draws that line.",
+      "type": "string"
+    },
+    "ObservationId": {
+      "description": "Identifies one observation of game state.\n\nLoad-bearing: every recommendation is bound to the `ObservationId` it\nwas generated from, and a recommendation whose observation has been\nsuperseded is invalidated rather than shown as current. This is the\nidentifier that makes \"never silently stale\" checkable.",
+      "type": "string"
+    },
+    "RecommendationEvidence": {
+      "description": "The four-way evidence split.\n\nEach list holds a different *kind* of claim, and the interface renders them\ndifferently because a player should be able to tell \"your gold is 7\"\n(observed) from \"opponents are probably ahead on tempo\" (inferred). The\nrecommendation validator rejects any advice whose `strategy_refs` cite a\ndocument that was not retrieved for this turn, which is only checkable\nbecause the citations live in their own list.",
+      "type": "object",
+      "properties": {
+        "model_inferences": {
+          "description": "Claims the model produced that are neither observed nor cited.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "observed_facts": {
+          "description": "Facts read from the observation. Each should be traceable to a field in\nthe envelope.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "strategy_refs": {
+          "description": "Identifiers of strategy documents retrieved for this turn. Verified\nagainst what retrieval actually returned.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "user_provided": {
+          "description": "Context the user supplied, for example an answer to a spoken question.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "observed_facts",
+        "strategy_refs",
+        "model_inferences",
+        "user_provided"
+      ]
+    },
+    "RecommendedAction": {
+      "description": "One concrete thing the player could do, in priority order.",
+      "type": "object",
+      "properties": {
+        "action": {
+          "description": "Adapter-defined action verb, for example `buy` or `sell`.",
+          "type": "string"
+        },
+        "condition": {
+          "description": "A precondition the player should check first, when the advice is\nconditional. Absent means unconditional, not \"unknown\".",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "priority": {
+          "description": "1 is the top recommendation.",
+          "type": "integer",
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0
+        },
+        "target": {
+          "description": "What the action applies to.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "priority",
+        "action",
+        "target"
+      ]
+    },
+    "SessionId": {
+      "description": "Identifies one coaching session: a run of the app bound to one game and\none capture target. Outlives individual matches.",
+      "type": "string"
+    },
+    "Validity": {
+      "description": "When a recommendation stops being true.\n\n`invalidated_by` names change kinds; they are matched against the\n`change_summary` of later observation envelopes. An empty\n`invalidated_by` is a claim that nothing observable can falsify this\nadvice, which should be rare and deliberate.",
+      "type": "object",
+      "properties": {
+        "expires_at": {
+          "description": "Wall-clock expiry, when the advice is time-bounded rather than\nstate-bounded. `None` means it dies only on state change.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "invalidated_by": {
+          "description": "Change kinds that kill this recommendation.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "invalidated_by"
+      ]
+    }
+  }
+}

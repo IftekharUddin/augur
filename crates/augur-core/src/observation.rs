@@ -19,6 +19,8 @@ use crate::ids::{AdapterVersion, GameId, ObservationId, SchemaVersion, SessionId
 /// contents by default, and a type that could carry them would make that
 /// promise unenforceable.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema-export", derive(schemars::JsonSchema))]
+#[serde(deny_unknown_fields)]
 pub struct CaptureSource {
     /// How the frame was obtained, for example `screen_capture`.
     pub kind: String,
@@ -42,6 +44,12 @@ pub type ObservationPhase = String;
 /// recommendation's invalidation triggers, that recommendation is dead. See
 /// [`crate::recommendation::Validity`].
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema-export", derive(schemars::JsonSchema))]
+// Unknown fields are rejected, not ignored. An envelope carrying a field this
+// build does not understand is an envelope from a different contract, and
+// silently dropping it is how a consumer ends up confidently wrong about a
+// state it only partly read.
+#[serde(deny_unknown_fields)]
 pub struct GameStateEnvelope {
     /// Envelope schema version. See [`crate::ids::CURRENT_SCHEMA_VERSION`].
     pub schema_version: SchemaVersion,
@@ -67,4 +75,12 @@ pub struct GameStateEnvelope {
     pub privacy: Privacy,
     /// Per-field extraction evidence.
     pub evidence: Vec<FieldEvidence>,
+    /// The game-owned state payload.
+    ///
+    /// Deliberately untyped here. This crate must not know what a Battlegrounds
+    /// board looks like, and the architecture test enforces that. The payload
+    /// is validated against the adapter's own schema
+    /// (`games/<id>/schemas/game-state.schema.json`), which is where a game's
+    /// vocabulary belongs.
+    pub state: serde_json::Value,
 }

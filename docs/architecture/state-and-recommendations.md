@@ -4,6 +4,26 @@ Common envelopes are small and game-agnostic; payloads are game-owned.
 Schemas live at `games/<id>/schemas/` (game payloads) and
 `crates/augur-core` (envelopes), validated in CI.
 
+**Status: the envelope and recommendation contracts are implemented.** The Rust
+types in `augur-core` are canonical; the JSON Schemas are generated from them
+and committed at `crates/augur-core/schemas/`, with
+`crates/augur-core/tests/schema_drift.rs` failing the build if the two drift.
+The game-owned `state` payload and the game-scoped schemas under
+`games/<id>/schemas/` are Milestone 1.
+
+Three rules are enforced rather than described:
+
+- **Unknown fields are rejected, not ignored** (`deny_unknown_fields`, at every
+  level of the contract). A payload carrying a field this build does not
+  understand comes from a different contract, and silently dropping it produces
+  a consumer that is confidently wrong about a state it only partly read.
+- **Absent is absent.** A missing required field is a parse error rather than a
+  default, because a defaulted confidence is indistinguishable from a measured
+  one. `Option` fields, and only those, accept absent and `null`
+  interchangeably.
+- **An unrecognized `schema_version` is refused**, not read with today's rules.
+  A later revision may give an existing field a new meaning.
+
 ## Observation envelope
 
 ```json

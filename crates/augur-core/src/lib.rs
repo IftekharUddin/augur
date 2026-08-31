@@ -24,8 +24,13 @@ pub mod evidence;
 pub mod ids;
 pub mod observation;
 pub mod recommendation;
+pub mod validate;
 
 pub use evidence::{Confidence, ConfidenceError, FieldEvidence, Privacy};
-pub use ids::{AdapterVersion, GameId, MatchId, ObservationId, SchemaVersion, SessionId};
+pub use ids::{
+    AdapterVersion, CURRENT_SCHEMA_VERSION, GameId, MatchId, ObservationId, SchemaVersion,
+    SessionId,
+};
 pub use observation::{CaptureSource, GameStateEnvelope, ObservationPhase};
 pub use recommendation::{Recommendation, RecommendationEvidence, RecommendedAction, Validity};
+pub use validate::ContractError;

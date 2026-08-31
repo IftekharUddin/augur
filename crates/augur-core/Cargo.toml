@@ -8,6 +8,18 @@ publish = false
 
 [dependencies]
 serde = { version = "1.0", default-features = false, features = ["derive", "std"] }
-
-[dev-dependencies]
 serde_json = { version = "1.0", default-features = false, features = ["std"] }
+schemars = { version = "1.2", optional = true }
+
+[features]
+# Mirrors the upstream `zeroclaw-config` pattern: schema generation is a
+# feature so a consumer that only needs the Rust types does not compile
+# schemars. On by default because the drift test and the export binary both
+# need it, and a schema that is not regenerated is a schema that is wrong.
+default = ["schema-export"]
+schema-export = ["dep:schemars"]
+
+[[bin]]
+name = "augur-schema-export"
+path = "src/bin/schema_export.rs"
+required-features = ["schema-export"]
