@@ -6,18 +6,32 @@ status, date, reviewer, sources, notes) and gates support status.
 
 ## Hearthstone Battlegrounds — review checklist (Milestone 0 issue)
 
-To review before M1 ships (the issue tracks the actual findings; nothing here
-asserts a conclusion):
+**Findings:** [hearthstone-battlegrounds-review.md](hearthstone-battlegrounds-review.md)
+(sources retrieved 2026-08-30). The conclusion is not recorded there:
+`policy_review.status` stays `pending` until the maintainer decides, because
+the decision is a risk judgment about other people's accounts rather than a
+technical finding.
+
+Checklist, for reference and for future re-runs:
 
 - Blizzard End User License Agreement — clauses on third-party software,
   automation, and "hacks/cheats/bots"; Augur's read-only, no-input design
   must be evaluated against the exact current text.
 - Blizzard's stance and enforcement history on **deck trackers and overlays**
-  (e.g. the long-standing tolerance of Hearthstone Deck Tracker reading
-  `Power.log` with log output officially togglable) — relevant precedent for
-  log-file use and overlays, to be cited concretely in the review.
-- Hearthstone in-game options for log output (the supported observation
-  side-channel, if used).
+  — relevant precedent for log-file use and overlays, to be cited concretely in
+  the review.
+
+  **Correction (2026-08-30):** an earlier version of this line described
+  Hearthstone's log output as "officially togglable". The review could not
+  verify that. The documented mechanism is that Hearthstone Deck Tracker writes
+  a `log.config` file into the game's installation directory to enable a debug
+  logging facility; no Blizzard in-game setting, patch note, or support article
+  exposing log output as a supported option was found. That is a materially
+  weaker claim to authorization than a publisher-provided switch, and it sits
+  closer to the EULA's "Hacks" definition than the original wording implied.
+  See [hearthstone-battlegrounds-review.md](hearthstone-battlegrounds-review.md).
+- Hearthstone in-game options for log output, **if any exist**. The 2026-08-30
+  review found none; this line previously assumed they did.
 - Any API terms if official APIs are used.
 - Streaming/derivative-content guidelines only insofar as they affect
   screenshots in diagnostics/fixtures.
